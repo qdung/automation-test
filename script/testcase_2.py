@@ -23,8 +23,20 @@ driver.get("https://www.phptravels.net/login")
 # Testcase name: Login test (abnormal)
 
 try: 
-  # Step 1. Input email address:
-  action1 = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div[2]/div/form/div[1]/div/input").send_keys("user@phptravels.com")
+  # Step 1. Input email address (2):
+  action1 = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div[2]/div/form/div[1]/div/input (2)").send_keys("user@phptravels.com (2)")
+  driver.implicitly_wait(10)
+  # Step 2. Input email password (2):
+  action2 = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div[2]/div/form/div[2]/div[1]/input").send_keys("demouser")
+  driver.implicitly_wait(10)
+  # Step 3. Press button Sign In (2):
+  action3 = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div[2]/div/form/div[3]/button").click()
+  driver.implicitly_wait(10)
+  # Step 4. Check title after sign in (2):
+  action4 = print(driver.find_element(By.XPATH, "/html/body/section[1]/div/div[1]/div/div[1]/div[1]/div/div/h2").get_attribute("textContent"))
+  driver.implicitly_wait(10)
+  # Step 4. Check title after sign in (2):
+  action5 = print(driver.find_element(By.XPATH, "/html/body/section[1]/div/div[1]/div/div[1]/div[1]/div/div/h2").get_attribute("textContent"))
   driver.implicitly_wait(10)
   driver.close()
 
