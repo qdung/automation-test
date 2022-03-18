@@ -6,6 +6,8 @@ header = pandas.read_excel(
 testcaseInfo = pandas.read_excel(
     'Testcase_ZenS.xlsx', sheet_name='Integration test', skiprows=7)
 
+footer = "  driver.close()\n\nexcept Exception as e: print(e)\n" + "#End of file\n"
+
 dataHash = testcaseInfo.to_dict()
 
 # Config
@@ -23,6 +25,7 @@ testcaseDescriptions = testcaseInfo.get('TC description')
 xPath = testcaseInfo.get('Xpath')
 testData = testcaseInfo.get('Test data')
 action = testcaseInfo.get('Action')
+actionId = testcaseInfo.get('Id')
 
 header = open('./template/header.txt', 'r').read()
 header = header.replace('CUSTOM_WIDTH', width).replace('CUSTOM_HEIGHT', height)
@@ -57,43 +60,48 @@ def mapActionToSeleniumCore(action, xpath, value=None, filePng=None):
         return 'driver.get_screenshot_as_file("{}")'.format(filePng)
 
 
-def generateBodyTestCase(id: number):
-    tcName = "\n\n# Testcase name: {}\n\n".format(testcaseName[id])
+def getTestCaseRange(testcaseId: number):
+    previousBreakCount = 0
+    lastBreakCount = 0
+
+    previousIndex = 0
+    lastIndex = 0
+
+    for index, description in enumerate(testcaseDescriptions):
+        if(description == '-'):
+            if(testcaseId == previousBreakCount + 1):
+                previousIndex = index+1
+            previousBreakCount += 1
+
+            if(testcaseId == lastBreakCount):
+                lastIndex = index+1
+            lastBreakCount += 1
+    return (previousIndex, lastIndex - 1)
+
+
+def generateBodyTestCase(_from, _to):
     _try = "try: \n"
     body = ''
-    count = 0
-    for index, tcDescription in enumerate(testcaseDescriptions):
-        print('Index row: {}'.format(index))
-        if(str(tcDescription) == '-'):
-            print('tcId: {}'.format(tcId))
-            print('Index of "-": {}'.format(index))
-            break
 
-        description = "  # Step {}:\n".format(tcDescription)
-        step = "  action{} = ".format(index+1) + \
+    for row in range(_from, _to):
+        description = "  # Step {}:\n".format(testcaseDescriptions[row])
+        step = "  action{} = ".format(actionId[row]) + \
             str(mapActionToSeleniumCore(
-                action[index], xPath[index], testData[index])) + "\n"
+                action[row], xPath[row], testData[row])) + "\n"
         wait = "  driver.implicitly_wait({})\n".format(
             implicitlyWaitTiming)
         body += (description + step + wait)
-        print('index: {}'.format(index))
-        return (tcName + _try + body)
+    return (_try + body)
 
-
-print(testcaseName[1])
 
 for index, tcId in enumerate(testcaseID):
     if(str(tcId).isnumeric()):
-        # print(tcId)
-        tcDetail = header + generateBodyTestCase(index) + "  driver.close()\n" + \
-            "\nexcept Exception as e: print(e)\n" + "#End of file\n"
+        (_from, _to) = getTestCaseRange(tcId - 1)
+        print('Testcase {} range: {} -> {}'.format(tcId, _from, _to - 1))
+        tcName = "\n\n# Testcase name: {}\n\n".format(testcaseName[index])
+        body = generateBodyTestCase(_from, _to)
+
+        tcDetail = header + tcName + body + footer
         fileScript = open("./script/testcase_{}.py".format(tcId), "w")
         fileScript.write(tcDetail)
         fileScript.close()
-
-# tcDetail = header + generateBodyTestCase() + "  driver.close()\n" + \
-#     "\nexcept Exception as e: print(e)\n" + "#End of file\n"
-
-# fileScript = open("./script/tc1.py", "w")
-# fileScript.write(tcDetail)
-# fileScript.close()
