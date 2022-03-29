@@ -11,7 +11,6 @@ from selenium.webdriver.common.by import By
 
 s=Service(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=s)
-#chromedriver_path = "//Users/user/Documents/Automation/chromedriver"
 
 options = Options()
 options.add_argument("--window-size=1920x1080")

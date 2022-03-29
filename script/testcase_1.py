@@ -1,6 +1,8 @@
 # Design by Nguyen Quoc Dung
 # Copyright ZenS Company 2021-2022
 
+import time
+from selenium.webdriver.support.select import Select
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -9,36 +11,25 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
-s=Service(ChromeDriverManager().install())
+s = Service(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=s)
-#chromedriver_path = "//Users/user/Documents/Automation/chromedriver"
 
 options = Options()
 options.add_argument("--window-size=1920x1080")
 options.add_argument("--verbose")
 
 driver.maximize_window()
-driver.get("https://www.phptravels.net/login")
+driver.get("https://www.w3schools.com/bootstrap/bootstrap_dropdowns.asp")
 
-# Testcase name: Login test (normal)
+# Testcase name: Login test with student (abnormal)
 
-try: 
-  # Step 1. Input email address:
-  action1 = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div[2]/div/form/div[1]/div/input").send_keys("user@phptravels.com")
-  driver.implicitly_wait(10)
-  # Step 2. Input email password:
-  action2 = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div[2]/div/form/div[2]/div[1]/input").send_keys("demouser")
-  driver.implicitly_wait(10)
-  # Step 3. Press button Sign In:
-  action3 = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[2]/div[2]/div/form/div[3]/button").click()
-  driver.implicitly_wait(10)
-  # Step 4. Check title after sign in:
-  action4 = print(driver.find_element(By.XPATH, "/html/body/section[1]/div/div[1]/div/div[1]/div[1]/div/div/h2").get_attribute("textContent"))
-  driver.implicitly_wait(10)
-  # Step 4. Check title after sign in:
-  action5 = print(driver.find_element(By.XPATH, "/html/body/section[1]/div/div[1]/div/div[1]/div[1]/div/div/h2").get_attribute("textContent"))
-  driver.implicitly_wait(10)
-  driver.close()
+try:
+    sel = driver.find_element(
+        By.XPATH, "/html/body/div[7]/div[1]/div[1]/div[3]/button").clic
+    print(sel)
+    time.sleep(5)
+    # driver.close()
 
-except Exception as e: print(e)
-#End of file
+except Exception as e:
+    print(e)
+# End of file
